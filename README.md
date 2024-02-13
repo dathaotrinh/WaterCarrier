@@ -11,14 +11,13 @@
 * https://github.com/dathaotrinh/WaterCarrier
 
 ## C. Milestones
-Milestones: 
-* Milestone 1 (2/5 - 2/16): Initialize technology frontend, backend development environments.
+
+* Milestone 1 (2/5 - 2/16): Initialize technology frontend, and backend development environments.
 * Milestone 2 (2/12 - 2/23): Build UI for Login and Registration Forms.
-* Milestone 3 (2/26 - 3/8): Implement bar chart.
-* Milestone 4 (3/11 - 3/22): Implement "Container with Most Water" algorithm & Testing. 
-* Milestone 5 (3/25 - 4/5): Complete prototype & Testing.
-* Milestone 6 (4/8 - 4/16): Deployment.
-* Milestone 7 (4/17 - End of semester): Testing for bugs and making visuals look better.
+* Milestone 3 (2/26 - 3/8): Implement bar chart and gaming page.
+* Milestone 4 (3/11 - 4/12): Implement "Container with Most Water" algorithm, statistics UI & Testing.
+* Milestone 5 (4/16 - End of the semester): Deployment & Testing for bugs and making visuals look better.
+
 
 ## D. Technologies Used
   * [Frontend] HTML, CSS, Flask, TailwindCSS, JavaScript
