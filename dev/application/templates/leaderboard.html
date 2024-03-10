@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<section class="text-gray-600 body-font">
+    <style>
+        /* Custom CSS styles */
+        .table-auto thead tr th,
+        .table-auto tbody tr td {
+            padding: 15px;
+        }
+    </style>
+    <div class="container px-5 py-10 mx-auto">
+        <div class="flex flex-col text-center w-full mb-20">
+            <h1 class="sm:text-3xl text-2xl font-medium title-font mb-2 text-gray-900">Leaderboard</h1>
+        </div>
+        <div class="lg:w-full w-full mx-auto overflow-auto py-10">
+            <table class="table-auto w-full text-left whitespace-no-wrap">
+                <thead>
+                    <tr>
+                        <th
+                            class="px-4 py-10 title-font font-medium text-gray-900 text-lg bg-gray-100 rounded-tl rounded-bl">
+                            Ranking</th>
+                        <th class="px-4 py-3 title-font font-medium text-gray-900 text-lg bg-gray-100">
+                            Username</th>
+                        <th class="px-4 py-3 title-font font-medium text-gray-900 text-lg bg-gray-100">
+                            Total Play Time</th>
+                        <th class="px-4 py-3 title-font font-medium text-gray-900 text-lg bg-gray-100">
+                            Total Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="px-4 py-3 text-center">01</td>
+                        <td class="px-4 py-3 text-center">5 Mb/s</td>
+                        <td class="px-4 py-3 text-center">15 GB</td>
+                        <td class="px-4 py-3 text-gray-900 text-center">Free</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

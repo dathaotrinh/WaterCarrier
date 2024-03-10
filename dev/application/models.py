@@ -1,19 +1,26 @@
 import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
 
-class User():
-    def __init__(self, username, firstname, lastname, email, password):
+class User(object):
+    def __init__(self, userid, username, firstname, lastname, email, password):
+        self.__userid = userid
         self.__username = username
         self.__firstname = firstname
         self.__lastname = lastname
         self.__email = email
-        self.__password = generate_password_hash(password)
+        # self.__password = generate_password_hash(password)
+        self.__password = password
 
     def set_password(self, password):
-        self.__password = generate_password_hash(password)
+        # self.__password = generate_password_hash(password)
+        self.__password = password
 
-    def get_password(self, password):
-        return check_password_hash(self.__password, password)
+    # def get_password(self, password):
+    #     return check_password_hash(self.__password, password)
+
+    def get_password(self):
+        # return check_password_hash(self.__password, password)
+        return self.__password
 
     def get_username(self):
         return self.__username
@@ -26,36 +33,34 @@ class User():
     
     def get_lastname(self):
         return self.__lastname
-    
-    def get_all(self):
-        connection = self.establish_connection()
-        cursor = connection.cursor()
-        cursor.execute('SELECT * FROM USERS') 
-        data = cursor.fetchall() 
-        cursor.close()
-        return data
-    
-    def get_one(self, username):
-        connection = self.establish_connection()
-        cursor = connection.cursor()
-        cursor.execute('SELECT * FROM USERS WHERE username = (username) VALUES (?)', (username)) 
-        data = cursor.fetchone()
-        cursor.close()
-        return data
-    
-    def establish_connection(self):
-        connection = sqlite3.connect('application/database.db') 
-        connection.row_factory = sqlite3.Row
-        return connection
-    
-    def save(self):
-        connection = self.establish_connection()
-        print("Successfully connect to database")
-        cur = connection.cursor()
-        cur.execute('INSERT INTO USERS (username, firstname, lastname, email, password) VALUES (?, ?, ?, ?, ?)',
-                         (self.__username, self.__firstname, self.__lastname, self.__email, self.__password))
-        connection.commit()
-        cur.close()
-        print("New user saved.")
 
+    def get_userid(self):
+        return self.__userid
+
+class Event(object):
+    def __init__(self, eventid, score, difficulty, date, duration, userid):
+        self.__eventid = eventid
+        self.__score = score
+        self.__difficulty = difficulty
+        self.__date = date
+        self.__duration = duration
+        self.__userid = userid
+
+    def get_eventid(self):
+        return self.__eventid
+    
+    def get_score(self):
+        return self.__score
+
+    def get_difficulty(self):
+        return self.__difficulty
+    
+    def get_date(self):
+        return self.__date
+    
+    def get_duration(self):
+        return self.__duration
+    
+    def get_userid(self):
+        return self.__userid
 

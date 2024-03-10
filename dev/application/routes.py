@@ -1,58 +1,79 @@
 from application import app
-from flask import render_template, session, redirect, url_for, flash, request
+from application.timer import CountUpTimer
+from flask import render_template, session, redirect, url_for, flash, request, jsonify
 from application.models import User
 from application.forms import LoginForm, RegisterForm
 from random import randint
-from application.common import save, get_all, get_one
+from application.common import save, get_all, get_one, start_timer, stop_timer, algorithm, reset
+
 @app.route("/", methods=["GET", "POST"])
 @app.route("/index", methods=["GET", "POST"])
 def index():
     values = []
     poles = []
+    timerStart = "False"
     if request.method == "POST":
-        request.form["level"]
         if request.form["level"] == "easy":
+            timerStart = "True"
+            start_timer()
+            reset(values, poles)
             for i in range(5):
-                value = randint(0, 5)
+                value = randint(1, 5)
                 values.append(value)
                 poles.append("Pole " + str(i))
         elif request.form["level"] == "medium":
+            timerStart = "True"
+            start_timer()
+            reset(values, poles)
             for i in range(10):
-                value = randint(0, 10)
+                value = randint(1, 10)
                 values.append(value)
                 poles.append("Pole " + str(i))
-        else:
+        elif request.form["level"] == "hard":
+            timerStart = "True"
+            start_timer()
+            reset(values, poles)
             for i in range(20):
                 value = randint(0, 20)
                 values.append(value)
                 poles.append("Pole " + str(i))
-    return render_template("barchart.html", index=True, values=values, poles=poles)
+        elif request.form["level"] == "stop":
+            timerStart = "False"
+            stop_timer()
+        # else:
+        #     timerStart = "False"
+        #     time = stop_timer()
+        #     waterAmount = request.form.get("waterAmount")
+        #     possibleSolution = request.form.get("possibleSolution")
+        #     container = request.form.get("container")
+        #     result = algorithm(values)
+        #     reset(values, poles)
+    return render_template("barchart.html", index=True, values=values, poles=poles, timerStart=timerStart)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    # if session.get("username"):
-    #     return redirect(url_for("index"))
-    # form = LoginForm()
-    # if form.validate_on_submit():
-    #     email = form.email.data
-    #     password = form.password.data
-        # user = User.objects(email=email).first()
-        # if user and user.get_password(password):
-        #     flash(f"{user.first_name}, you are successfully logged in!", "success")
-        #     session['user_id'] = user.user_id
-        #     session['username'] = user.first_name         
-        #     return redirect("/index")
-        # else:
-        #     flash("Something is wrong!", "danger")
-
+    if session.get("username"):
+        return redirect(url_for("index"))
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
+        current_user = get_one(username)
+        if(current_user):
+            current_user = User(*current_user)
+            if current_user.get_password() == password:
+                flash(f"{current_user.get_firstname()}, you are successfully logged in!", "success")
+                session['userid'] = current_user.get_userid()
+                session['username'] = current_user.get_username()
+                return redirect("/index")
+            else:
+                flash("Something is wrong!", "danger")
     return render_template("login.html", title="Login", login=True)
 
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
+    if session.get("username"):
+        return redirect(url_for("index"))
     if request.method == "POST":
         username = request.form.get("username")
         email = request.form.get("email")
@@ -64,7 +85,6 @@ def register():
             flash("Passwords do not match!", "danger")
         else:
             user = User(username, firstname, lastname, email, password)
-            # user.save()
             save(user)
             flash(f"{user.get_firstname()}, you are successfully registered!", "success")
             return redirect(url_for("index"))
@@ -72,6 +92,38 @@ def register():
 
 @app.route("/logout")
 def logout():
-    session["user_id"]=False
+    session["userid"]=False
     session.pop("username", None)
     return redirect(url_for("index"))
+
+@app.route("/profile")
+def profile():
+    # session["userid"]=False
+    # session.pop("username", None)
+    return render_template("profile.html", title="Profile", profile=True)
+
+@app.route("/leaderboard")
+def leaderboard():
+    # session["userid"]=False
+    # session.pop("username", None)
+    return render_template("leaderboard.html", title="Leaderboard", leaderboard=True)
+
+@app.route('/button_clicked', methods=['POST'])
+def button_clicked():
+    # Handle the button click action here
+    stop_timer()
+    container = request.json['container']
+    waterAmount = int(request.json['waterAmount'])
+    values = request.json['values']
+    result = algorithm(values)
+
+
+    if (int(result['maxArea']) != int(waterAmount)):
+        print("yes")
+    # Do something with the received data
+    print("Received data from JavaScript:", container, waterAmount)
+    
+    # Optionally, you can send a response back to JavaScript
+    response_data = {"message": "The result is wrong!"}
+    return jsonify(response_data)
+    # return "Button clicked! This text is returned from Flask."

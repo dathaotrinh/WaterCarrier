@@ -1,34 +1,147 @@
 {% extends "layout.html" %}
 
 {% block content %}
-<canvas id="barChart" width="30" height="10"></canvas>
+<!-- <div class="flex flex-col text-center w-full">
+  <h1 class="sm:text-3xl text-2xl font-medium title-font mb-2 text-gray-900">Leaderboard</h1>
+</div> -->
+
+<canvas class="mt-10" id="myChart" width="30" height="10"></canvas>
+<div class="flex flex-wrap py-10 justify-center items-center">
+  <div class="flex flex-col w-full md:w-1/3 justify-center items-center">
+    <p>Timer: <span id="timer">0:00:00</span></p>
+    <p class="my-5 text-gray-600">Please choose a level you want to play.</p>
+    <form name="index" action="" method="post">
+
+      <div class="inline-flex" role="group" aria-label="Button group">
+        <button name="level" value="easy" class="h-10 px-5 text-gray-600">Easy</button>
+        <button name="level" value="medium" class="h-10 px-5 text-gray-600">Medium</button>
+        <button name="level" value="hard" class="h-10 px-5 text-gray-600">Hard</button>
+      </div>
+    </form>
+
+  </div>
+  <div class="flex flex-col w-full md:w-2/3">
+    <div class="flex flex-wrap justify-center items-center py-10">
+      <div class="flex flex-col md:w-2/3">
+        <p class="my-5 text-gray-600">1. Select one container (two columns) was identified as optimal for
+          holding the most water on the chart.</p>
+        <p class="my-5 text-gray-600">2. What is the maximum volume of water that can be held by the selected
+          container(s)?
+        </p>
+        <input type="text" id="waterAmount" name="waterAmount"
+          class="md:w-2/3 bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+      </div>
+      <div class="flex flex-col w-full justify-center items-center md:w-1/3 py-10">
+
+        <button id="myButton" name="level" value="submit" class="h-10 px-5 text-gray-600">
+          <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            class="w-10 h-10" viewBox="0 0 24 24">
+            <path d="M5 12h14M12 5l7 7-7 7"></path>
+          </svg>
+        </button>
+        <div id="result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <script type="text/javascript">
   const poles = {{ poles | tojson}}
-
+  let milliseconds = 0;
+  let seconds = 0;
+  let minutes = 0;
+  let timerInterval = 10;
   const values = {{ values }}
+  const colorList = Array(values.length).fill("rgb(135, 206, 235)");
 
   // Bar chart
-  new Chart(document.getElementById("barChart"), {
+  const ctx = document.getElementById('myChart')
+  const myChart = new Chart(ctx, {
     type: 'bar',
     data: {
       labels: poles,
       datasets: [
         {
           label: "Height",
-          data: values
+          data: values,
+          backgroundColor: colorList,
+          borderColor: colorList,
+          borderWidth: 1
+        }],
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
         }
-      ]
+      }
     }
   });
+
+  function clickHandler(click) {
+    const points = myChart.getElementsAtEventForMode(
+      click,
+      'nearest',
+      { intersect: true },
+      true
+    );
+
+    if (points[0]) {
+      if (myChart.data.datasets[points[0].datasetIndex].backgroundColor[points[0].index] == 'red') {
+        myChart.data.datasets[points[0].datasetIndex].backgroundColor[points[0].index] = "rgb(135, 206, 235)";
+      } else {
+        myChart.data.datasets[points[0].datasetIndex].backgroundColor[points[0].index] = "red";
+      }
+    }
+    myChart.update();
+  }
+
+  ctx.onclick = clickHandler;
+  const timerStart = "{{ timerStart }}"
+
+  function timer() {
+    timerInterval = setInterval(function () {
+      milliseconds++;
+      if (milliseconds === 100) {
+        seconds++;
+        milliseconds = 0;
+      }
+      if (seconds === 60) {
+        minutes++;
+        seconds = 0;
+      }
+      // Update the contents of the element
+      document.getElementById("timer").innerText =
+        minutes + ":" +
+        (seconds < 10 ? "0" : "") + seconds + ":" +
+        (milliseconds < 10 ? "0" : "") + milliseconds;
+    }, 10);
+
+  }
+  if (timerStart === "True") {
+    timer();
+  }
+
+  // When the button is clicked
+  document.getElementById("myButton").addEventListener("click", function () {
+    clearInterval(timerInterval);
+    var container = document.getElementById("container").value;
+    var waterAmount = document.getElementById("waterAmount").value;
+    // Make an AJAX request to the Flask route
+    fetch("/button_clicked", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ values: values, container: container, waterAmount: waterAmount, minutes: minutes, seconds: seconds, milliseconds: milliseconds })
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+      })
+      .catch(error => console.error('Error:', error));
+  });
+
 </script>
-<form name="index" action="" method="post">
-  <div class="flex flex-col items-center">
-    <p class="my-5 text-gray-600">Please choose a level you want to play.</p>
-    <div class="inline-flex" role="group" aria-label="Button group">
-      <button name="level" value="easy" class="h-10 px-5 text-gray-600">Easy</button>
-      <button name="level" value="medium" class="h-10 px-5 text-gray-600">Medium</button>
-      <button name="level" value="hard" class="h-10 px-5 text-gray-600">Hard</button>
-    </div>
-  </div>
-</form>
 {% endblock %}
