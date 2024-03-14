@@ -123,14 +123,21 @@
     timer();
   }
 
+  const columns = [];
   // When the button is clicked
   document.getElementById("myButton").addEventListener("click", function () {
     clearInterval(timerInterval);
-    var container = document.getElementById("container").value;
-    var waterAmount = document.getElementById("waterAmount").value;
+    const points = myChart.getDatasetMeta(0).data.forEach((element, index) => {
+      if (element.options.backgroundColor === 'red') {
+        columns.push(index)
+      }
+    });
+    console.log(columns)
+    const container = columns.toString();
+    const waterAmount = document.getElementById("waterAmount").value;
     // Make an AJAX request to the Flask route
-    fetch("/button_clicked", {
-      method: "POST",
+    fetch('/button_clicked', {
+      method: 'POST',
       headers: {
         "Content-Type": "application/json"
       },
@@ -138,7 +145,7 @@
     })
       .then(response => response.json())
       .then(data => {
-        console.log(data);
+        document.getElementById("result").innerText = data.message;
       })
       .catch(error => console.error('Error:', error));
   });

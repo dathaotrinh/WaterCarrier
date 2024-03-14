@@ -108,7 +108,7 @@ def leaderboard():
     # session.pop("username", None)
     return render_template("leaderboard.html", title="Leaderboard", leaderboard=True)
 
-@app.route('/button_clicked', methods=['POST'])
+@app.route('/button_clicked', methods=['POST', 'GET'])
 def button_clicked():
     # Handle the button click action here
     stop_timer()
@@ -116,14 +116,11 @@ def button_clicked():
     waterAmount = int(request.json['waterAmount'])
     values = request.json['values']
     result = algorithm(values)
-
-
-    if (int(result['maxArea']) != int(waterAmount)):
-        print("yes")
-    # Do something with the received data
-    print("Received data from JavaScript:", container, waterAmount)
-    
-    # Optionally, you can send a response back to JavaScript
+    is_correct = False
+    if (int(result['maxArea']) == int(waterAmount) and container in result['possibleSolution']):
+        is_correct = True
+    print("Received data from JavaScript:", result['maxArea'])
     response_data = {"message": "The result is wrong!"}
+    if is_correct == True:
+        response_data = {"message": "The result is right!"}
     return jsonify(response_data)
-    # return "Button clicked! This text is returned from Flask."

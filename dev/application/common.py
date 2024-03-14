@@ -64,7 +64,7 @@ def stop_timer():
     
 
 def algorithm(height):
-    possible_solution = []
+    possible_solution = set()
     maxarea = 0
     left = 0
     right = len(height) - 1
@@ -74,9 +74,9 @@ def algorithm(height):
         if current_area > maxarea:
             maxarea = current_area
             possible_solution.clear()
-            possible_solution.append({left, right})
+            possible_solution.add(f"{left},{right}")
         elif current_area == maxarea:
-            possible_solution.append({left, right})     
+            possible_solution.add(f"{left},{right}")
         if height[left] <= height[right]:
             left += 1
         else:
