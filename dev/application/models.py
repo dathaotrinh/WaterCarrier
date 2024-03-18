@@ -1,6 +1,7 @@
 import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
 
+
 class User(object):
     def __init__(self, userid, username, firstname, lastname, email, password):
         self.__userid = userid
@@ -38,25 +39,18 @@ class User(object):
         return self.__userid
 
 class Event(object):
-    def __init__(self, eventid, score, difficulty, date, duration, userid):
+    def __init__(self, eventid, difficulty, duration, userid, result):
         self.__eventid = eventid
-        self.__score = score
         self.__difficulty = difficulty
-        self.__date = date
         self.__duration = duration
         self.__userid = userid
+        self.__result = result
 
     def get_eventid(self):
         return self.__eventid
-    
-    def get_score(self):
-        return self.__score
 
     def get_difficulty(self):
         return self.__difficulty
-    
-    def get_date(self):
-        return self.__date
     
     def get_duration(self):
         return self.__duration
@@ -64,3 +58,5 @@ class Event(object):
     def get_userid(self):
         return self.__userid
 
+    def get_result(self):
+        return self.__result

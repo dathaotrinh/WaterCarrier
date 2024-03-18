@@ -1,0 +1,11 @@
+.error-message {
+    color: red; /* Red font color */
+    text-align: center;
+}
+
+.alert {
+    border: 1px solid red; /* Red border */
+    background-color: #ffe6e6; /* Light red background color */
+    padding: 10px; /* Padding for container */
+    margin-bottom: 10px; /* Margin to separate containers */
+}

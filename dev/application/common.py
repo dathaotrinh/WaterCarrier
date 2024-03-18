@@ -25,25 +25,55 @@ def establish_connection():
     connection.row_factory = sqlite3.Row
     return connection
 
-def save(user):
-    connection = establish_connection()
-    print("Successfully connect to database")
-    cur = connection.cursor()
-    cur.execute('INSERT INTO USERS (username, firstname, lastname, email, password) VALUES (?, ?, ?, ?, ?)',
-                    (user.get_username(), user.get_firstname(), user.get_lastname(), user.get_email(), user.get_password()))
-    connection.commit()
-    cur.close()
-    print("New user saved.")
+def save_user(user):
+    try:
+        connection = establish_connection()
+        print("Successfully connect to database")
+        cur = connection.cursor()
+        cur.execute('INSERT INTO USERS (userid, username, firstname, lastname, email, password) VALUES (?, ?, ?, ?, ?, ?)',
+                        (user.get_userid(), user.get_username(), user.get_firstname(), user.get_lastname(), user.get_email(), user.get_password()))
+        connection.commit()
+        rows_affected = cur.rowcount  # Get the number of rows affected
+        cur.close()    
+        if rows_affected == 1:
+            print("New user saved successfully.")
+            return True
+        else:
+            print("Failed to save user.")
+            return False
+    except Exception as e:
+        # Handle any error that occurs
+        print("Error:", e)
+        return False
 
-def save(event):
+def save_event(event):
+    try:
+        connection = establish_connection()
+        print("Successfully connect to database")
+        cur = connection.cursor()
+        cur.execute('INSERT INTO Event (eventid, difficulty, duration, userid, result) VALUES (?, ?, ?, ?, ?)',
+                        (event.get_eventid(), event.get_difficulty(), event.get_duration(), event.get_userid(), event.get_result()))
+        connection.commit()
+        rows_affected = cur.rowcount  # Get the number of rows affected
+        cur.close()
+        if rows_affected == 1:
+            print("New event saved successfully.")
+            return True
+        else:
+            print("Failed to save event.")
+            return False
+    except Exception as e:
+        # Handle any error that occurs
+        print("Error:", e)
+        return False
+
+def get_all_events():
     connection = establish_connection()
-    print("Successfully connect to database")
-    cur = connection.cursor()
-    cur.execute('INSERT INTO Event (score, difficulty, date, duration, userid) VALUES (?, ?, ?, ?, ?)',
-                    (event.get_score(), event.get_difficulty(), event.get_date(), event.get_duration(), event.get_userid()))
-    connection.commit()
-    cur.close()
-    print("New event saved.")
+    cursor = connection.cursor()
+    cursor.execute('SELECT * FROM Event')
+    data = cursor.fetchall()
+    cursor.close()
+    return data
 
 timer = None
 # Function to start the timer
@@ -60,8 +90,6 @@ def stop_timer():
     global timer
     if timer:
         return timer.stop_timer()
-         
-    
 
 def algorithm(height):
     possible_solution = set()
@@ -87,4 +115,29 @@ def reset(values, poles):
     values = []
     poles = []
 
-# def calculate_score():
+def calculate_score(M, S, MS, difficulty):
+    # Define base score values for each difficulty level
+    difficulty_scores = {
+        'easy': 100,
+        'medium': 200,
+        'hard': 300
+    }
+    
+    # Define conversion factors
+    MIN_TO_MS = 60 * 1000
+    SEC_TO_MS = 1000
+
+    # Convert time to milliseconds
+    Total_MS = M * MIN_TO_MS + S * SEC_TO_MS + MS
+    
+    # Time-based score
+    # shorter times get higher scores
+    Time_Score = 1 / Total_MS 
+
+    # Difficulty-based score
+    Difficulty_Score = difficulty_scores[difficulty]
+    
+    # Total score
+    Total_Score = Time_Score + Difficulty_Score
+    
+    return Total_Score

@@ -53,6 +53,7 @@
   let minutes = 0;
   let timerInterval = 10;
   const values = {{ values }}
+  const difficulty = `{{ difficulty }}`
   const colorList = Array(values.length).fill("rgb(135, 206, 235)");
 
   // Bar chart
@@ -134,14 +135,14 @@
     });
     console.log(columns)
     const container = columns.toString();
-    const waterAmount = document.getElementById("waterAmount").value;
+    const waterAmount = document.getElementById("waterAmount").value ? document.getElementById("waterAmount").value : "";
     // Make an AJAX request to the Flask route
     fetch('/button_clicked', {
       method: 'POST',
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ values: values, container: container, waterAmount: waterAmount, minutes: minutes, seconds: seconds, milliseconds: milliseconds })
+      body: JSON.stringify({ values: values, container: container, waterAmount: waterAmount, minutes: minutes, seconds: seconds, milliseconds: milliseconds, difficulty: difficulty })
     })
       .then(response => response.json())
       .then(data => {
