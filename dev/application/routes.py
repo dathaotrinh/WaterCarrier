@@ -137,11 +137,11 @@ def button_clicked():
     print(duration)
     if is_correct == True:
         response_data = {"message": "The result is right!"}
-        if session['userid']:
+        if session['userid'] == True:
             event = Event(event_len + 1, difficulty, duration, session['userid'], 1)
             save_event(event)
     else:
-        if session['userid']:
+        if session['userid'] == True:
             event = Event(event_len + 1, difficulty, duration, session['userid'], 0)
             save_event(event)        
     return jsonify(response_data)
