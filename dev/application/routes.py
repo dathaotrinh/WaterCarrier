@@ -63,6 +63,8 @@ def login():
                 return redirect("/index")
             else:
                 flash("Something is wrong!", "danger")
+        else:
+            flash("Something is wrong!", "danger")
     return render_template("login.html", title="Login", login=True)
 
 
@@ -124,6 +126,7 @@ def button_clicked():
     milliseconds = request.json['milliseconds']
     result = algorithm(values)
     print(result['possibleSolution'])
+    print(int(result['maxArea']))
     is_correct = False
     if (int(result['maxArea']) == int(waterAmount) and container in result['possibleSolution']):
         is_correct = True
