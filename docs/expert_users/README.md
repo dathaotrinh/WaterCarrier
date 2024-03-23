@@ -12,5 +12,7 @@ This document provides step-by-step instructions for setting up the Water Carrie
 
 * Open virtual environment `source venv/bin/activate`
 * Navigate to the dev directory of WaterCarrier in your terminal.
+* Install project dependencies `pip install -r requirements.txt`
+* Initialize the database `python3 application/init_db.py`
 * Run `flask run`
 * Navigate to `http://127.0.0.1:5000` to view the progress of Water Carrier.
