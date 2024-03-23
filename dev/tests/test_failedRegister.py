@@ -19,7 +19,7 @@ class TestFailedRegister():
     self.driver.quit()
   
   def test_failedRegister(self):
-    self.driver.get("https://watercarrier.onrender.com/")
+    self.driver.get("http://127.0.0.1:5000/")
     self.driver.set_window_size(1440, 809)
     self.driver.find_element(By.LINK_TEXT, "Register").click()
     self.driver.find_element(By.ID, "firstname").click()
@@ -28,6 +28,7 @@ class TestFailedRegister():
     self.driver.find_element(By.ID, "username").send_keys("test")
     self.driver.find_element(By.ID, "email").send_keys("test@example.com")
     self.driver.find_element(By.ID, "password").send_keys("password")
-    self.driver.find_element(By.ID, "password_confirm").send_keys("password")
+    self.driver.find_element(By.ID, "password_confirm").send_keys("passwor")
     self.driver.find_element(By.CSS_SELECTOR, ".border-0").click()
+
   

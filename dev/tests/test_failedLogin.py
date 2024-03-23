@@ -19,7 +19,7 @@ class TestFailedLogin():
     self.driver.quit()
   
   def test_failedLogin(self):
-    self.driver.get("https://watercarrier.onrender.com/")
+    self.driver.get("http://127.0.0.1:5000/")
     self.driver.set_window_size(1440, 809)
     self.driver.find_element(By.LINK_TEXT, "Login").click()
     self.driver.find_element(By.ID, "username").click()
